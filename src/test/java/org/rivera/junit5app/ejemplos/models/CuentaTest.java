@@ -92,17 +92,16 @@ class CuentaTest {
     bank.addAccount(accountDestiny);
     bank.setName("BBVA");
     bank.transfer(accountSource, accountDestiny, new BigDecimal(1500));
-    assertEquals("48500", accountSource.getBalance().toPlainString());
-    assertEquals("81500.50", accountDestiny.getBalance().toPlainString());
-
-    assertEquals( 2, bank.getAccounts().size() );
-    assertEquals( "BBVA", accountSource.getBank().getName() ); //Relación Bidireccional(La agregué en método de añadir Cuenta en Banco)
-    //Uso API Stream para encontrar una persona
-    assertEquals( "Irving", bank.getAccounts()
-                      .stream().filter( c -> c.getPerson().equals("Irving") )
-                      .findFirst().get().getPerson() );
-
-    assertTrue(bank.getAccounts().stream()
-            .anyMatch(c -> c.getPerson().equals("Angeles") ));
+    //"assertAll()" lo puedo usar cuando tengo demasiadas pruebas y quiero que se ejecuten todas. Si falla más de una mostrara el reporte de todas
+    assertAll( () -> assertEquals("48500", accountSource.getBalance().toPlainString()) ,
+             () -> assertEquals("81500.50", accountDestiny.getBalance().toPlainString()) ,
+             () -> assertEquals( 2, bank.getAccounts().size() ) ,
+             () -> assertEquals( "BBVA", accountSource.getBank().getName() ), //Relación Bidireccional(La agregué en método de añadir Cuenta en Banco)
+             () -> assertEquals( "Irving", bank.getAccounts()       //Uso API Stream para encontrar una persona
+                     .stream().filter( c -> c.getPerson().equals("Irving") )
+                     .findFirst().get().getPerson() ),
+             () -> assertTrue(bank.getAccounts().stream()
+                     .anyMatch(c -> c.getPerson().equals("Angeles") ))
+            );
   }
 }
