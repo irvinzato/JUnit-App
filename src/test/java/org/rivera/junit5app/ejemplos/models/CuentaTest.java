@@ -1,6 +1,8 @@
 package org.rivera.junit5app.ejemplos.models;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.rivera.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 
@@ -11,18 +13,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class CuentaTest {
 
   @Test
+  @DisplayName("Prueba que la persona de la cuenta sea igual a una en especifico")  //Notación para dar un nombre en específico a prueba
   void testAccountName() {
     Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
     //account.setPerson("Irving");
     String expected = "Irving"; //Valor esperado VS Real o actual
     String real = account.getPerson();
 
-    assertNotNull( real );
-    Assertions.assertEquals( expected, real ); //o solo "assertEquals( expected, real );" porque estoy importando todos sus métodos estáticos
+    //El parámetro que pongo como expresión lamba es opcional, sirve para personalizar el mensaje de error
+    assertNotNull( real, () -> "El parámetro 'persona' no puede ser nulo" );
+    Assertions.assertEquals( expected, real, () -> "Los valores no son iguales" ); //o solo "assertEquals( expected, real );" porque estoy importando todos sus métodos estáticos
     assertTrue(real.equals(expected));
   }
   //Balance(saldo en ingles)
   @Test
+  @DisplayName("Prueba que el saldo sea igual a uno en especifico y no sea menor a 0")
   void testAccountBalance() {
     Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
     assertNotNull( account.getBalance() );
@@ -32,6 +37,7 @@ class CuentaTest {
   }
 
   @Test
+  @DisplayName("Prueba que dos cuentas sean iguales utilizando equals")
   void testAccountReference() {
     Cuenta account1 = new Cuenta("Irving", new BigDecimal("50000.50"));
     Cuenta account2 = new Cuenta("Irving", new BigDecimal("50000.50"));
@@ -41,6 +47,7 @@ class CuentaTest {
   }
 
   @Test
+  @Disabled //Notación para deshabilitar prueba por alguna razón(Queda documentado)
   void testAccountDebit() {
     Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
     account.debit(new BigDecimal(100)); //Le RESTO esta cantidad a la cuenta
