@@ -2,6 +2,7 @@ package org.rivera.junit5app.ejemplos.models;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.rivera.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 
 import java.math.BigDecimal;
 
@@ -59,6 +60,15 @@ class CuentaTest {
     assertEquals( "50100.50", account.getBalance().toPlainString() );
   }
 
+  @Test
+  void testInsufficientMoneyAccountException() {
+    Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
 
-
+    Exception exception = assertThrows( DineroInsuficienteException.class, () -> { //método de JUnit para manejar excepciones
+      account.debit(new BigDecimal(55500));
+    });
+    String expected = "Dinero Insuficiente";
+    String actual = exception.getMessage();
+    assertEquals( expected, actual );
+  }
 }

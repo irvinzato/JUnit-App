@@ -1,5 +1,7 @@
 package org.rivera.junit5app.ejemplos.models;
 
+import org.rivera.junit5app.ejemplos.exceptions.DineroInsuficienteException;
+
 import java.math.BigDecimal;
 //Atajos para crear clase test - "Alt + Enter" o "Alt + Insert" y create test o manual
 public class Cuenta {
@@ -8,7 +10,7 @@ public class Cuenta {
 
   public Cuenta(String name, BigDecimal balance) {
     this.person = name;
-    this.balance = balance;
+    this.balance = balance; //saldo
   }
 
   public String getPerson() {
@@ -29,7 +31,11 @@ public class Cuenta {
 
   //La idea de estos dos métodos nuevos es primero hacerles la prueba y después desarrollarlos aquí
   public void debit(BigDecimal amount) {
-    this.balance = this.balance.subtract(amount); //Es inmutable BigDecimal por eso debo asignar, no solo usar
+    BigDecimal newBalance = this.balance.subtract(amount); //Es inmutable BigDecimal por eso debo asignar, no solo usar
+    if( newBalance.compareTo(BigDecimal.ZERO) < 0 ) {
+      throw new DineroInsuficienteException("Dinero Insuficiente");
+    }
+    this.balance = newBalance;
   }
 
   public void credit(BigDecimal amount) {
