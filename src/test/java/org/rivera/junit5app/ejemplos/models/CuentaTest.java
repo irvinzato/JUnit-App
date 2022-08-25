@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*; //Es para asumir algún valor de verdad
 
 class CuentaTest {
   Cuenta account;   //Variable reutilizable para muchos de mis métodos(Ciclo de vida - Parecido a Jazmine)
@@ -174,7 +175,7 @@ class CuentaTest {
   }
 
   @Test
-  @EnabledIfSystemProperty(named = "ENV", matches = "dev") //Se modifican en "Edit configuration"
+  @EnabledIfSystemProperty(named = "ENV", matches = "dev") //Se modifican en "Edit configuration" importante si es mayúscula o minúscula
   void testDev() {
   }
 
@@ -200,7 +201,31 @@ class CuentaTest {
   }
 
   @Test
-  @DisabledIfEnvironmentVariable(named = "ENVIRONMENT", matches = "PROD") //Se modifican en "Edit configuration"
+  @DisabledIfEnvironmentVariable(named = "ENVIRONMENT", matches = "PROD") //Se modifican en "Edit configuration", en configuraciones del arranque
   void testEnvProdDisabled() {
+  }
+  //ASSUMPTIONS
+  @Test
+  @DisplayName("Prueba utilizando assumeTrue() para toda la prueba")
+  void testAccountBalanceDev() {
+    boolean isDev = "dev".equals(System.getProperty("ENV"));    //Si es igual a las configuraciones del arranque
+    assumeTrue(isDev);       //Ocupa importación, si se cumple ejecuta la prueba, si no la deshabilita, parecido al @Disabled pero flexible
+
+    assertNotNull( account.getBalance() );
+    assertEquals( 50000.50, account.getBalance().doubleValue() );
+    assertFalse( account.getBalance().compareTo(BigDecimal.ZERO) < 0 );
+    assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+  }
+
+  @Test
+  @DisplayName("Prueba utilizando assumingThat() para un bloque y otro bloque independiente")
+  void testAccountBalanceDev2() {
+    boolean isDev = "dev".equals(System.getProperty("ENV"));
+    assumingThat( isDev, () -> { //Ejecuta este bloque si cumple la variable de verdad, independientemente de la respuesta las pruebas de abajo se hacen
+      assertNotNull( account.getBalance() );
+      assertEquals( 50000.50, account.getBalance().doubleValue() );
+    });
+    assertFalse( account.getBalance().compareTo(BigDecimal.ZERO) < 0 );
+    assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
   }
 }
