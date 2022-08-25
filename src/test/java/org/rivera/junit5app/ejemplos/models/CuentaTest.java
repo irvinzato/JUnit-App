@@ -1,9 +1,11 @@
 package org.rivera.junit5app.ejemplos.models;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 import org.rivera.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 
 import java.math.BigDecimal;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -127,5 +129,51 @@ class CuentaTest {
              () -> assertTrue(bank.getAccounts().stream()
                      .anyMatch(c -> c.getPerson().equals("Angeles") ))
             );
+  }
+
+  @Test
+  @EnabledOnOs(OS.WINDOWS)  //Elijo en que sistema(s) operativo(s) se ejecutara esta prueba
+  void testOnlyWindows() {
+  }
+
+  @Test
+  @EnabledOnOs({OS.LINUX, OS.MAC})
+  void testOnlyLinuxMac() {
+  }
+
+  @Test
+  @DisabledOnOs(OS.WINDOWS) //Deshabilitado en...
+  void testNoWindows() {
+  }
+
+  @Test
+  @EnabledOnJre(JRE.JAVA_8) //Solo en cierta versión de Java(Estoy usando la 18 actualmente) enable también tiene su disable
+  void onlyJDK8() {
+  }
+
+  @Test
+  void printSystemProperties() {
+    Properties properties = System.getProperties();
+    properties.forEach( (k, v) -> System.out.println( k + " - " + v));
+  }
+
+  @Test
+  @EnabledIfSystemProperty(named = "java.version", matches = "18.0.2")
+  void testJavaVersion() {
+  }
+
+  @Test
+  @DisabledIfSystemProperty(named = "os.arch", matches = ".*32.*")
+  void testOnly64() {
+  }
+
+  @Test
+  @EnabledIfSystemProperty(named = "user.name", matches = "Irving")
+  void testUsername() {
+  }
+
+  @Test
+  @EnabledIfSystemProperty(named = "ENV", matches = "dev")
+  void testDev() {
   }
 }
