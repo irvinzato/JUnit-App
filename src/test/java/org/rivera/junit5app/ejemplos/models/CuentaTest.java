@@ -9,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CuentaTest {
   Cuenta account;   //Variable reutilizable para muchos de mis métodos(Ciclo de vida - Parecido a Jazmine)
+
+  @BeforeAll
+  static void beforeAll() {
+    System.out.println("Antes de todos los métodos");
+  }
+
   @BeforeEach //Antes de cada método - Muy parecido a Pruebas Unitarias en Angular
   void initMethodTest() {
     this.account = new Cuenta("Irving", new BigDecimal("50000.50"));
@@ -18,6 +24,11 @@ class CuentaTest {
   @AfterEach  //Después de cada método
   void finishMethodTest() {
     System.out.println("Finalizando método");
+  }
+
+  @AfterAll
+  static void afterAll() {
+    System.out.println("Después de todos los métodos");
   }
 
   @Test
