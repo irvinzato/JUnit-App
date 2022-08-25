@@ -71,4 +71,30 @@ class CuentaTest {
     String actual = exception.getMessage();
     assertEquals( expected, actual );
   }
+
+  @Test
+  void testTransferMoneyAccounts() {
+    Cuenta accountSource = new Cuenta("Irving", new BigDecimal("50000"));
+    Cuenta accountDestiny = new Cuenta("Angeles", new BigDecimal("80000.50"));
+    Banco bank = new Banco();
+    bank.setName("BBVA");
+    bank.transfer(accountSource, accountDestiny, new BigDecimal(1500));
+    assertEquals("48500", accountSource.getBalance().toPlainString());
+    assertEquals("81500.50", accountDestiny.getBalance().toPlainString());
+  }
+
+  @Test
+  void testBankAccountsRelationship() {
+    Cuenta accountSource = new Cuenta("Irving", new BigDecimal("50000"));
+    Cuenta accountDestiny = new Cuenta("Angeles", new BigDecimal("80000.50"));
+    Banco bank = new Banco();
+    bank.addAccount(accountSource);
+    bank.addAccount(accountDestiny);
+    bank.setName("BBVA");
+    bank.transfer(accountSource, accountDestiny, new BigDecimal(1500));
+    assertEquals("48500", accountSource.getBalance().toPlainString());
+    assertEquals("81500.50", accountDestiny.getBalance().toPlainString());
+
+    assertEquals( 2, bank.getAccounts().size() );
+  }
 }

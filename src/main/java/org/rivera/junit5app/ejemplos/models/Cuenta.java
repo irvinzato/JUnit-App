@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 public class Cuenta {
   private String person;
   private BigDecimal balance; //Cuando se trabaja con monedas, finanzas, dinero es mejor "BigDecimal"
+  private Banco bank;
 
   public Cuenta(String name, BigDecimal balance) {
     this.person = name;
@@ -27,6 +28,14 @@ public class Cuenta {
 
   public void setBalance(BigDecimal balance) {
     this.balance = balance;
+  }
+
+  public Banco getBank() {
+    return bank;
+  }
+
+  public void setBank(Banco bank) {
+    this.bank = bank;
   }
 
   //La idea de estos dos métodos nuevos es primero hacerles la prueba y después desarrollarlos aquí
