@@ -22,6 +22,7 @@ public class Banco {
 
   public void addAccount(Cuenta account) {
     accounts.add(account);
+    account.setBank(this); //Cada que añado una cuenta al Banco, también añado banco a la cuenta
   }
 
   public String getName() {

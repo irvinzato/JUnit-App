@@ -96,5 +96,13 @@ class CuentaTest {
     assertEquals("81500.50", accountDestiny.getBalance().toPlainString());
 
     assertEquals( 2, bank.getAccounts().size() );
+    assertEquals( "BBVA", accountSource.getBank().getName() ); //Relación Bidireccional(La agregué en método de añadir Cuenta en Banco)
+    //Uso API Stream para encontrar una persona
+    assertEquals( "Irving", bank.getAccounts()
+                      .stream().filter( c -> c.getPerson().equals("Irving") )
+                      .findFirst().get().getPerson() );
+
+    assertTrue(bank.getAccounts().stream()
+            .anyMatch(c -> c.getPerson().equals("Angeles") ));
   }
 }
