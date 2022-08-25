@@ -133,77 +133,99 @@ class CuentaTest {
             );
   }
 
-  @Test
-  @EnabledOnOs(OS.WINDOWS)  //Elijo en que sistema(s) operativo(s) se ejecutara esta prueba
-  void testOnlyWindows() {
+  //Puedo crear clases Test para agrupar por categorías(Organización Anidada - @Nested)
+  @Nested //Anotación para agrupar pruebas, puedo utilizar displayNamed, beforeEach, afterEach en estas clases anidadas
+  @DisplayName("Pruebas según el sistema operativo")
+  class OperatingSystemTest {
+    @Test
+    @EnabledOnOs(OS.WINDOWS)  //Elijo en que sistema(s) operativo(s) se ejecutara esta prueba
+    void testOnlyWindows() {
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    void testOnlyLinuxMac() {
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS) //Deshabilitado en...
+    void testNoWindows() {
+    }
+  }
+@Nested
+  class JavaVersionTest {
+    @Test
+    @EnabledOnJre(JRE.JAVA_8) //Solo en cierta versión de Java(Estoy usando la 18 actualmente) enable también tiene su disable
+    void onlyJDK8() {
+    }
+    @Test
+    @EnabledOnJre(JRE.JAVA_18)
+    void onlyJDK18() {
+    }
+    @Test
+    @DisabledOnJre(JRE.JAVA_9)
+    void testNoJDK9() {
+    }
+  }
+@Nested
+  class SystemPropertiesTest {
+    @Test
+    void printSystemProperties() {
+      Properties properties = System.getProperties();
+      properties.forEach( (k, v) -> System.out.println( k + " - " + v));
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "java.version", matches = "18.0.2")
+    void testJavaVersion() {
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = "os.arch", matches = ".*32.*")
+    void testOnly64() {
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "user.name", matches = "Irving")
+    void testUsername() {
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "ENV", matches = "dev") //Se modifican en "Edit configuration" importante si es mayúscula o minúscula
+    void testDev() {
+    }
+
+  }
+@Nested
+  class EnvironmentVariableTest {
+    @Test
+    void printEnvironmentVariables() {
+      Map<String, String> getenv = System.getenv();
+      getenv.forEach((k, v) -> System.out.println(k + " - " + v));
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*jdk-18.0.2.*") //Con expresión regular porque no soporta el carácter '\\'
+    void testJavaHome() {
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "NUMBER_OF_PROCESSORS", matches = "8")
+    void testProcessors() {
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "ENVIRONMENT", matches = "DEV") //Se modifican en "Edit configuration"
+    void testEnvDev() {
+    }
+
+    @Test
+    @DisabledIfEnvironmentVariable(named = "ENVIRONMENT", matches = "PROD") //Se modifican en "Edit configuration", en configuraciones del arranque
+    void testEnvProdDisabled() {
+    }
+
   }
 
-  @Test
-  @EnabledOnOs({OS.LINUX, OS.MAC})
-  void testOnlyLinuxMac() {
-  }
-
-  @Test
-  @DisabledOnOs(OS.WINDOWS) //Deshabilitado en...
-  void testNoWindows() {
-  }
-
-  @Test
-  @EnabledOnJre(JRE.JAVA_8) //Solo en cierta versión de Java(Estoy usando la 18 actualmente) enable también tiene su disable
-  void onlyJDK8() {
-  }
-
-  @Test
-  void printSystemProperties() {
-    Properties properties = System.getProperties();
-    properties.forEach( (k, v) -> System.out.println( k + " - " + v));
-  }
-
-  @Test
-  @EnabledIfSystemProperty(named = "java.version", matches = "18.0.2")
-  void testJavaVersion() {
-  }
-
-  @Test
-  @DisabledIfSystemProperty(named = "os.arch", matches = ".*32.*")
-  void testOnly64() {
-  }
-
-  @Test
-  @EnabledIfSystemProperty(named = "user.name", matches = "Irving")
-  void testUsername() {
-  }
-
-  @Test
-  @EnabledIfSystemProperty(named = "ENV", matches = "dev") //Se modifican en "Edit configuration" importante si es mayúscula o minúscula
-  void testDev() {
-  }
-
-  @Test
-  void printEnvironmentVariables() {
-    Map<String, String> getenv = System.getenv();
-    getenv.forEach((k, v) -> System.out.println(k + " - " + v));
-  }
-
-  @Test
-  @EnabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*jdk-18.0.2.*") //Con expresión regular porque no soporta el carácter '\\'
-  void testJavaHome() {
-  }
-
-  @Test
-  @EnabledIfEnvironmentVariable(named = "NUMBER_OF_PROCESSORS", matches = "8")
-  void testProcessors() {
-  }
-
-  @Test
-  @EnabledIfEnvironmentVariable(named = "ENVIRONMENT", matches = "DEV") //Se modifican en "Edit configuration"
-  void testEnvDev() {
-  }
-
-  @Test
-  @DisabledIfEnvironmentVariable(named = "ENVIRONMENT", matches = "PROD") //Se modifican en "Edit configuration", en configuraciones del arranque
-  void testEnvProdDisabled() {
-  }
   //ASSUMPTIONS
   @Test
   @DisplayName("Prueba utilizando assumeTrue() para toda la prueba")
