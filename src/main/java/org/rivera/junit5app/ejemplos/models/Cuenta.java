@@ -27,6 +27,15 @@ public class Cuenta {
     this.balance = balance;
   }
 
+  //La idea de estos dos métodos nuevos es primero hacerles la prueba y después desarrollarlos aquí
+  public void debit(BigDecimal amount) {
+    this.balance = this.balance.subtract(amount); //Es inmutable BigDecimal por eso debo asignar, no solo usar
+  }
+
+  public void credit(BigDecimal amount) {
+    this.balance = this.balance.add(amount);
+  }
+
   //Para que equals compare por valores del objeto, no por instancia
   @Override
   public boolean equals(Object obj) {

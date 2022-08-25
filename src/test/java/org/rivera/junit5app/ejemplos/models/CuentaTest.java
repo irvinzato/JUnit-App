@@ -15,13 +15,16 @@ class CuentaTest {
     //account.setPerson("Irving");
     String expected = "Irving"; //Valor esperado VS Real o actual
     String real = account.getPerson();
+
+    assertNotNull( real );
     Assertions.assertEquals( expected, real ); //o solo "assertEquals( expected, real );" porque estoy importando todos sus métodos estáticos
     assertTrue(real.equals(expected));
   }
-
+  //Balance(saldo en ingles)
   @Test
   void testAccountBalance() {
     Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
+    assertNotNull( account.getBalance() );
     assertEquals( 50000.50, account.getBalance().doubleValue() ); //El BigDecimal lo transformo a double
     assertFalse( account.getBalance().compareTo(BigDecimal.ZERO) < 0 ); //Como es BigDecimal se compara un poco diferente, compareTo regresa 1, 0 o -1 depende el caso
     assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 ); //Lo mismo con lógica inversa
@@ -35,4 +38,27 @@ class CuentaTest {
     //assertNotEquals( account2, account1 ); //No son iguales los objetos aun que tengan los mismos valores(Si no modifico equals del objeto)
     assertEquals( account2, account1 );  //La idea es que compare por valores del objeto, no por instancia, para eso escribo "equals" en el objeto
   }
+
+  @Test
+  void testAccountDebit() {
+    Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
+    account.debit(new BigDecimal(100)); //Le RESTO esta cantidad a la cuenta
+
+    assertNotNull( account.getBalance() );  //Puede ser buena idea primero revisar que el saldo no sea nulo
+    assertEquals( 49900, account.getBalance().intValue() );
+    assertEquals( "49900.50", account.getBalance().toPlainString() );
+  }
+
+  @Test
+  void testAccountCredit() {
+    Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
+    account.credit(new BigDecimal(100)); //Le SUMO esta cantidad a la cuenta
+
+    assertNotNull( account.getBalance() );  //Puede ser buena idea primero revisar que el saldo no sea nulo
+    assertEquals( 50100, account.getBalance().intValue() );
+    assertEquals( "50100.50", account.getBalance().toPlainString() );
+  }
+
+
+
 }
