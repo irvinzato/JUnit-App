@@ -1,9 +1,6 @@
 package org.rivera.junit5app.ejemplos.models;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.rivera.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 
 import java.math.BigDecimal;
@@ -11,12 +8,23 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CuentaTest {
+  Cuenta account;   //Variable reutilizable para muchos de mis métodos(Ciclo de vida - Parecido a Jazmine)
+  @BeforeEach //Antes de cada método - Muy parecido a Pruebas Unitarias en Angular
+  void initMethodTest() {
+    this.account = new Cuenta("Irving", new BigDecimal("50000.50"));
+    System.out.println("Inicializando método");
+  }
+
+  @AfterEach  //Después de cada método
+  void finishMethodTest() {
+    System.out.println("Finalizando método");
+  }
 
   @Test
   @DisplayName("Prueba que la persona de la cuenta sea igual a una en especifico")  //Notación para dar un nombre en específico a prueba
   void testAccountName() {
-    Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
-    //account.setPerson("Irving");
+    //Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50")); //Ahora la inicializo con "BeforeEach"
+
     String expected = "Irving"; //Valor esperado VS Real o actual
     String real = account.getPerson();
 
@@ -29,7 +37,7 @@ class CuentaTest {
   @Test
   @DisplayName("Prueba que el saldo sea igual a uno en especifico y no sea menor a 0")
   void testAccountBalance() {
-    Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
+    //Primero hace BeforeEach
     assertNotNull( account.getBalance() );
     assertEquals( 50000.50, account.getBalance().doubleValue() ); //El BigDecimal lo transformo a double
     assertFalse( account.getBalance().compareTo(BigDecimal.ZERO) < 0 ); //Como es BigDecimal se compara un poco diferente, compareTo regresa 1, 0 o -1 depende el caso
@@ -49,9 +57,8 @@ class CuentaTest {
   @Test
   @Disabled //Notación para deshabilitar prueba por alguna razón(Queda documentado)
   void testAccountDebit() {
-    Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
-    account.debit(new BigDecimal(100)); //Le RESTO esta cantidad a la cuenta
 
+    account.debit(new BigDecimal(100)); //Le RESTO esta cantidad a la cuenta
     assertNotNull( account.getBalance() );  //Puede ser buena idea primero revisar que el saldo no sea nulo
     assertEquals( 49900, account.getBalance().intValue() );
     assertEquals( "49900.50", account.getBalance().toPlainString() );
@@ -59,7 +66,7 @@ class CuentaTest {
 
   @Test
   void testAccountCredit() {
-    Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
+
     account.credit(new BigDecimal(100)); //Le SUMO esta cantidad a la cuenta
 
     assertNotNull( account.getBalance() );  //Puede ser buena idea primero revisar que el saldo no sea nulo
@@ -69,7 +76,6 @@ class CuentaTest {
 
   @Test
   void testInsufficientMoneyAccountException() {
-    Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50"));
 
     Exception exception = assertThrows( DineroInsuficienteException.class, () -> { //método de JUnit para manejar excepciones
       account.debit(new BigDecimal(55500));
