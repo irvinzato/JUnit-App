@@ -26,4 +26,17 @@ public class Cuenta {
   public void setBalance(BigDecimal balance) {
     this.balance = balance;
   }
+
+  //Para que equals compare por valores del objeto, no por instancia
+  @Override
+  public boolean equals(Object obj) {
+    if( !(obj instanceof Cuenta) ) {
+      return false;
+    }
+    Cuenta account = (Cuenta) obj;
+    if( this.person == null | this.balance == null ) {
+      return false;
+    }
+    return this.person.equals(account.getPerson()) && this.balance.equals(account.getBalance());
+  }
 }

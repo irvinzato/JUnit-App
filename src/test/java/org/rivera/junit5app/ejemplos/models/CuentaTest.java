@@ -27,4 +27,12 @@ class CuentaTest {
     assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 ); //Lo mismo con lógica inversa
   }
 
+  @Test
+  void testAccountReference() {
+    Cuenta account1 = new Cuenta("Irving", new BigDecimal("50000.50"));
+    Cuenta account2 = new Cuenta("Irving", new BigDecimal("50000.50"));
+
+    //assertNotEquals( account2, account1 ); //No son iguales los objetos aun que tengan los mismos valores(Si no modifico equals del objeto)
+    assertEquals( account2, account1 );  //La idea es que compare por valores del objeto, no por instancia, para eso escribo "equals" en el objeto
+  }
 }
