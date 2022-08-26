@@ -272,33 +272,46 @@ class CuentaTest {
 
   //Se repite varias veces de forma parametrizada con cada uno de los valores que pongo, las dos notaciones van de la mano
   //De aquí hasta la notación @MethodSource son diferentes maneras de parametrizar
-  @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
-  @ValueSource( strings = {"100", "300", "600", "900", "1800", "3600"} ) //También pueden ser enteros o doubles aunque con string es mejor al usar decimales
-  void testAccountDebitParametrizedValueSource(String amount) {
-    account.debit(new BigDecimal(amount));
-    assertNotNull( account.getBalance() );
-    System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
-    assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
-  }
+  @Nested
+  class PruebasParametrizadasTest {
+    @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
+    @ValueSource( strings = {"100", "300", "600", "900", "1800", "3600"} ) //También pueden ser enteros o doubles aunque con string es mejor al usar decimales
+    void testAccountDebitParametrizedValueSource(String amount) {
+      account.debit(new BigDecimal(amount));
+      assertNotNull( account.getBalance() );
+      System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
+      assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+    }
 
-  @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
-  @CsvSource( {"1 , 100", "2, 300", "3, 600", "4, 900", "5, 1800", "6, 3600"} ) //Indice-valor
-  void testAccountDebitParametrizedCsvSource(String index, String amount) {
-    System.out.println(index + " - " + amount);
-    account.debit(new BigDecimal(amount));
-    assertNotNull( account.getBalance() );
-    System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
-    assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
-  }
+    @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
+    @CsvSource( {"1 , 100", "2, 300", "3, 600", "4, 900", "5, 1800", "6, 3600"} ) //Indice-valor
+    void testAccountDebitParametrizedCsvSource(String index, String amount) {
+      System.out.println(index + " - " + amount);
+      account.debit(new BigDecimal(amount));
+      assertNotNull( account.getBalance() );
+      System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
+      assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+    }
 
-  @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
-  @CsvFileSource( resources = "/data.csv" )   //Se debe crear el archivo en "resources" carpeta debajo de "java"
-  void testAccountDebitParametrizedCsvFileSource(String amount) {
-    System.out.println(amount);
-    account.debit(new BigDecimal(amount));
-    assertNotNull( account.getBalance() );
-    System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
-    assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+    @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
+    @CsvFileSource( resources = "/data.csv" )   //Se debe crear el archivo en "resources" carpeta debajo de "java"
+    void testAccountDebitParametrizedCsvFileSource(String amount) {
+      System.out.println(amount);
+      account.debit(new BigDecimal(amount));
+      assertNotNull( account.getBalance() );
+      System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
+      assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+    }
+
+    @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
+    @CsvSource( {"200, 100", "301, 300", "700, 600", "905, 900", "2000, 1800", "3601, 3600"} ) //Saldo-Monto, puedo añadirle mas parámetros como persona, etc.
+    void testAccountDebitParametrizedCsvSource2(String balance, String amount) {   //Puedo hacer lo mismo con CvsFileSource
+      account.setBalance(new BigDecimal(balance));
+      account.debit(new BigDecimal(amount));
+      assertNotNull( account.getBalance() );
+      System.out.println("Reviso con parámetros saldo-monto desde CvsSource");
+      assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+    }
   }
 
   @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
