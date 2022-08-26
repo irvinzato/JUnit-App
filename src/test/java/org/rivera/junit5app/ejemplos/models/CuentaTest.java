@@ -10,10 +10,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.rivera.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*; //Es para asumir algún valor de verdad
@@ -338,5 +340,28 @@ class CuentaTest {
     return Arrays.asList("100", "300", "600", "900", "1800", "3600");
   }
 
+  //Diferentes formas de implementar "TimeOut"
+  @Nested
+  @Tag("timeout")
+  class examplesTimeoutTest {
+    @Test
+    @Timeout(5)   //Indico el tiempo que puede demorar esta prueba(segundos), si demora más la marca como fallida
+    void testTimeout() throws InterruptedException {
+      TimeUnit.SECONDS.sleep(6);
+    }
+
+    @Test
+    @Timeout(value = 6000, unit = TimeUnit.MILLISECONDS)
+    void testTimeout2() throws InterruptedException {
+      TimeUnit.SECONDS.sleep(6);
+    }
+
+    @Test //Esta forma no ocupa anotación, usa método de Assertions con lambda
+    void testTimeoutAssertions() {
+      assertTimeout(Duration.ofSeconds(5), () -> {
+        TimeUnit.SECONDS.sleep(4);
+      });
+    }
+  }
 
 }
