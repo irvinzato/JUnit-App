@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assumptions.*; //Es para asumir algún valor
 
 class CuentaTest {
   Cuenta account;   //Variable reutilizable para muchos de mis métodos(Ciclo de vida - Parecido a Jazmine)
+  TestInfo testInfo;  //Asi puedo utilizar las variables en cada uno de mis métodos(Las inicializo en BeforeEach)
+  TestReporter testReporter;
 
   @BeforeAll
   static void beforeAll() {
@@ -27,9 +29,12 @@ class CuentaTest {
   }
 
   @BeforeEach //Antes de cada método - Muy parecido a Pruebas Unitarias en Angular
-  void initMethodTest() {
+  void initMethodTest(TestInfo testInfo, TestReporter testReporter) {
     this.account = new Cuenta("Irving", new BigDecimal("50000.50"));
-    System.out.println("Inicializando método");
+    this.testInfo = testInfo;
+    this.testReporter = testReporter;
+    System.out.println("Inicializando método: " + testInfo.getDisplayName() + " - " + testInfo.getTestMethod().orElse(null).getName()
+                        + " con las etiquetas: " + testInfo.getTags());
   }
 
   @AfterEach  //Después de cada método
@@ -55,9 +60,12 @@ class CuentaTest {
   }
   //Balance(saldo en ingles)
   @Test
+  @Tag("account")
   @DisplayName("Prueba que el saldo sea igual a uno en especifico y no sea menor a 0")
   void testAccountBalance() {
-    //Primero hace BeforeEach
+    if( this.testInfo.getTags().contains("account") ) {
+      this.testReporter.publishEntry("Hace algo en especifico por tener la etiqueta cuenta");
+    }
     assertNotNull( account.getBalance() );
     assertEquals( 50000.50, account.getBalance().doubleValue() ); //El BigDecimal lo transformo a double
     assertFalse( account.getBalance().compareTo(BigDecimal.ZERO) < 0 ); //Como es BigDecimal se compara un poco diferente, compareTo regresa 1, 0 o -1 depende el caso
@@ -235,7 +243,7 @@ class CuentaTest {
 
   //ASSUMPTIONS
   @Test
-  @DisplayName("Prueba utilizando assumeTrue() para toda la prueba")
+  @DisplayName("Prueba utilizando assumeTrue() 'para toda la prueba'")
   void testAccountBalanceDev() {
     boolean isDev = "dev".equals(System.getProperty("ENV"));    //Si es igual a las configuraciones del arranque
     assumeTrue(isDev);       //Ocupa importación, si se cumple ejecuta la prueba, si no la deshabilita, parecido al @Disabled pero flexible
@@ -247,7 +255,7 @@ class CuentaTest {
   }
 
   @Test
-  @DisplayName("Prueba utilizando assumingThat() para un bloque y otro bloque independiente")
+  @DisplayName("Prueba utilizando assumingThat() 'para un bloque y otro bloque independiente'")
   void testAccountBalanceDev2() {
     boolean isDev = "dev".equals(System.getProperty("ENV"));
     assumingThat( isDev, () -> { //Ejecuta este bloque si cumple la variable de verdad, independientemente de la respuesta las pruebas de abajo se hacen
