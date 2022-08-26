@@ -70,7 +70,7 @@ class CuentaTest {
   }
 
   @Test
-  @Disabled //Notación para deshabilitar prueba por alguna razón(Queda documentado)
+  //@Disabled //Notación para deshabilitar prueba por alguna razón(Queda documentado)
   void testAccountDebit() {
 
     account.debit(new BigDecimal(100)); //Le RESTO esta cantidad a la cuenta
@@ -249,5 +249,17 @@ class CuentaTest {
     });
     assertFalse( account.getBalance().compareTo(BigDecimal.ZERO) < 0 );
     assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+  }
+
+  @DisplayName("Pruebas de cuenta debito con repeated")
+  @RepeatedTest(value = 5, name = "Repetición numero {currentRepetition} de {totalRepetitions}")  //Cantidad de veces que voy a repetir y mensaje opcional
+  void testAccountDebitRepeat(RepetitionInfo info) {  //Da la opción de usar esta variable para saber en qué repetición está
+    if( info.getCurrentRepetition() == 3 ) {
+      System.out.println("Código especifico para repetición numero " + info.getCurrentRepetition());
+    }
+    account.debit(new BigDecimal(100));
+    assertNotNull( account.getBalance() );
+    assertEquals( 49900, account.getBalance().intValue() );
+    assertEquals( "49900.50", account.getBalance().toPlainString() );
   }
 }
