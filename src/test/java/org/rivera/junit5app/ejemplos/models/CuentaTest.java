@@ -2,6 +2,8 @@ package org.rivera.junit5app.ejemplos.models;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.rivera.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 
 import java.math.BigDecimal;
@@ -261,5 +263,15 @@ class CuentaTest {
     assertNotNull( account.getBalance() );
     assertEquals( 49900, account.getBalance().intValue() );
     assertEquals( "49900.50", account.getBalance().toPlainString() );
+  }
+
+  //Se repite varias veces de forma parametrizada con cada uno de los valores que pongo, las dos notaciones van de la mano
+  @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
+  @ValueSource( strings = {"100", "300", "600", "900", "1800", "3600"} ) //También pueden ser enteros o doubles aunque con string es mejor al usar decimales
+  void testAccountDebitParametrized(String amount) {
+    account.debit(new BigDecimal(amount));
+    assertNotNull( account.getBalance() );
+    System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
+    assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
   }
 }
