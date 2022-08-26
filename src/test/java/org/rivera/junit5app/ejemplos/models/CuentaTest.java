@@ -46,10 +46,8 @@ class CuentaTest {
   @DisplayName("Prueba que la persona de la cuenta sea igual a una en especifico")  //Notación para dar un nombre en específico a prueba
   void testAccountName() {
     //Cuenta account = new Cuenta("Irving", new BigDecimal("50000.50")); //Ahora la inicializo con "BeforeEach"
-
     String expected = "Irving"; //Valor esperado VS Real o actual
     String real = account.getPerson();
-
     //El parámetro que pongo como expresión lamba es opcional, sirve para personalizar el mensaje de error
     assertNotNull( real, () -> "El parámetro 'persona' no puede ser nulo" );
     Assertions.assertEquals( expected, real, () -> "Los valores no son iguales" ); //o solo "assertEquals( expected, real );" porque estoy importando todos sus métodos estáticos
@@ -76,19 +74,19 @@ class CuentaTest {
     assertEquals( account2, account1 );  //La idea es que compare por valores del objeto, no por instancia, para eso escribo "equals" en el objeto
   }
 
+  @Tag("account")   //Para ejecutar por etiquetas hay que ir a "Edit configuration" y en lugar de "class" "tag"
   @Test
   //@Disabled //Notación para deshabilitar prueba por alguna razón(Queda documentado)
   void testAccountDebit() {
-
     account.debit(new BigDecimal(100)); //Le RESTO esta cantidad a la cuenta
     assertNotNull( account.getBalance() );  //Puede ser buena idea primero revisar que el saldo no sea nulo
     assertEquals( 49900, account.getBalance().intValue() );
     assertEquals( "49900.50", account.getBalance().toPlainString() );
   }
 
+  @Tag("account")
   @Test
   void testAccountCredit() {
-
     account.credit(new BigDecimal(100)); //Le SUMO esta cantidad a la cuenta
 
     assertNotNull( account.getBalance() );  //Puede ser buena idea primero revisar que el saldo no sea nulo
@@ -97,8 +95,8 @@ class CuentaTest {
   }
 
   @Test
+  @Tag("error")
   void testInsufficientMoneyAccountException() {
-
     Exception exception = assertThrows( DineroInsuficienteException.class, () -> { //método de JUnit para manejar excepciones
       account.debit(new BigDecimal(55500));
     });
@@ -107,6 +105,8 @@ class CuentaTest {
     assertEquals( expected, actual );
   }
 
+  @Tag("account") //Pueden tener más de una etiqueta
+  @Tag("bank")
   @Test
   void testTransferMoneyAccounts() {
     Cuenta accountSource = new Cuenta("Irving", new BigDecimal("50000"));
@@ -272,6 +272,7 @@ class CuentaTest {
 
   //Se repite varias veces de forma parametrizada con cada uno de los valores que pongo, las dos notaciones van de la mano
   //De aquí hasta la notación @MethodSource son diferentes maneras de parametrizar
+  @Tag("param") //Se aplica la etiqueta a todos los métodos que pertenecen a la clase, sirven para seccionar más las pruebas(puedo ejecutar solo las que tengan cierta etiqueta)
   @Nested
   class PruebasParametrizadasTest {
     @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
@@ -314,6 +315,7 @@ class CuentaTest {
     }
   }
 
+  @Tag("param")
   @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
   @MethodSource( "amountList" )   //Se debe crear el método estático
   void testAccountDebitParametrizedMethodSource(String amount) {
