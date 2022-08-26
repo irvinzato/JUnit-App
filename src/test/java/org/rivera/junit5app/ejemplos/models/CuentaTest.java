@@ -3,10 +3,15 @@ package org.rivera.junit5app.ejemplos.models;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.rivera.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -266,12 +271,49 @@ class CuentaTest {
   }
 
   //Se repite varias veces de forma parametrizada con cada uno de los valores que pongo, las dos notaciones van de la mano
+  //De aquí hasta la notación @MethodSource son diferentes maneras de parametrizar
   @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
   @ValueSource( strings = {"100", "300", "600", "900", "1800", "3600"} ) //También pueden ser enteros o doubles aunque con string es mejor al usar decimales
-  void testAccountDebitParametrized(String amount) {
+  void testAccountDebitParametrizedValueSource(String amount) {
     account.debit(new BigDecimal(amount));
     assertNotNull( account.getBalance() );
     System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
     assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
   }
+
+  @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
+  @CsvSource( {"1 , 100", "2, 300", "3, 600", "4, 900", "5, 1800", "6, 3600"} ) //Indice-valor
+  void testAccountDebitParametrizedCsvSource(String index, String amount) {
+    System.out.println(index + " - " + amount);
+    account.debit(new BigDecimal(amount));
+    assertNotNull( account.getBalance() );
+    System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
+    assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+  }
+
+  @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
+  @CsvFileSource( resources = "/data.csv" )   //Se debe crear el archivo en "resources" carpeta debajo de "java"
+  void testAccountDebitParametrizedCsvFileSource(String amount) {
+    System.out.println(amount);
+    account.debit(new BigDecimal(amount));
+    assertNotNull( account.getBalance() );
+    System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
+    assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+  }
+
+  @ParameterizedTest(name = "numero {index} ejecutando con valor {argumentsWithNames} - {0}" )
+  @MethodSource( "amountList" )   //Se debe crear el método estático
+  void testAccountDebitParametrizedMethodSource(String amount) {
+    System.out.println(amount);
+    account.debit(new BigDecimal(amount));
+    assertNotNull( account.getBalance() );
+    System.out.println("Me interesa que con cada una de las operaciones la cuenta no quede en 0 o menos");
+    assertTrue( account.getBalance().compareTo(BigDecimal.ZERO) > 0 );
+  }
+
+  static List<String> amountList() {
+    return Arrays.asList("100", "300", "600", "900", "1800", "3600");
+  }
+
+
 }
